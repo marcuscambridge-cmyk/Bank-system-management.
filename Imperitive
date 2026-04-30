@@ -1,0 +1,182 @@
+package Imperative;
+
+import java.util.Scanner;
+
+public class ImperativeBankSystem {
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        String[] accountNames = new String[100];
+        int[] accountNumbers = new int[100];
+        double[] balances = new double[100];
+
+        int count = 0;
+        int choice;
+
+        do {
+            System.out.println("\n--- Bank System (Imperative) ---");
+            System.out.println("1. Create Account");
+            System.out.println("2. View Accounts");
+            System.out.println("3. Deposit");
+            System.out.println("4. Withdraw");
+            System.out.println("5. Transfer");
+            System.out.println("6. Search");
+            System.out.println("7. Delete");
+            System.out.println("0. Exit");
+
+            choice = sc.nextInt();
+
+            switch (choice) {
+
+                // Create a new bank account
+                case 1:
+                    System.out.print("Enter name: ");
+                    String name = sc.next();
+
+                    // Store account details in arrays
+                    accountNames[count] = name;
+                    accountNumbers[count] = 1000 + count; // simple ID generation
+                    balances[count] = 0;
+
+                    count++;
+                    System.out.println("Account created!");
+                    break;
+
+                // Display all accounts
+                case 2:
+                    for (int i = 0; i < count; i++) {
+                        System.out.println(accountNumbers[i] + " - "
+                                + accountNames[i] + " - $" + balances[i]);
+                    }
+                    break;
+
+                // Deposit money into an account
+                case 3:
+                    System.out.print("Enter account number: ");
+                    int acc = sc.nextInt();
+
+                    // Search for matching account
+                    for (int i = 0; i < count; i++) {
+                        if (accountNumbers[i] == acc) {
+                            System.out.print("Enter amount: ");
+                            double amount = sc.nextDouble();
+
+                            balances[i] += amount; // update balance
+                            System.out.println("Deposited!");
+                        }
+                    }
+                    break;
+
+                // Withdraw money from an account
+                case 4:
+                    System.out.print("Enter account number: ");
+                    int accW = sc.nextInt();
+
+                    for (int i = 0; i < count; i++) {
+                        if (accountNumbers[i] == accW) {
+                            System.out.print("Enter amount: ");
+                            double amount = sc.nextDouble();
+
+                            // Check if enough balance exists
+                            if (balances[i] >= amount) {
+                                balances[i] -= amount;
+                                System.out.println("Withdrawn!");
+                            } else {
+                                System.out.println("Insufficient funds");
+                            }
+                        }
+                    }
+                    break;
+
+                // Transfer money between two accounts
+                case 5:
+                    System.out.print("Enter sender account number: ");
+                    int sender = sc.nextInt();
+
+                    System.out.print("Enter receiver account number: ");
+                    int receiver = sc.nextInt();
+
+                    System.out.print("Enter amount: ");
+                    double amountT = sc.nextDouble();
+
+                    int senderIndex = -1;
+                    int receiverIndex = -1;
+
+                    // Find both accounts in arrays
+                    for (int i = 0; i < count; i++) {
+                        if (accountNumbers[i] == sender) senderIndex = i;
+                        if (accountNumbers[i] == receiver) receiverIndex = i;
+                    }
+
+                    // Validate accounts and balance before transfer
+                    if (senderIndex != -1 && receiverIndex != -1) {
+                        if (balances[senderIndex] >= amountT) {
+                            balances[senderIndex] -= amountT;
+                            balances[receiverIndex] += amountT;
+                            System.out.println("Transfer successful!");
+                        } else {
+                            System.out.println("Insufficient funds");
+                        }
+                    } else {
+                        System.out.println("Invalid account number(s)");
+                    }
+                    break;
+
+                // Search account by name
+                case 6:
+                    System.out.print("Enter name to search: ");
+                    String searchName = sc.next();
+
+                    boolean found = false;
+
+                    for (int i = 0; i < count; i++) {
+                        if (accountNames[i].equalsIgnoreCase(searchName)) {
+                            System.out.println(accountNumbers[i] + " - "
+                                    + accountNames[i] + " - $" + balances[i]);
+                            found = true;
+                        }
+                    }
+
+                    if (!found) {
+                        System.out.println("Account not found");
+                    }
+                    break;
+
+                // Delete an account
+                case 7:
+                    System.out.print("Enter account number to delete: ");
+                    int deleteAcc = sc.nextInt();
+
+                    int index = -1;
+
+                    // Find account index
+                    for (int i = 0; i < count; i++) {
+                        if (accountNumbers[i] == deleteAcc) {
+                            index = i;
+                        }
+                    }
+
+                    // Shift elements left to remove account
+                    if (index != -1) {
+                        for (int j = index; j < count - 1; j++) {
+                            accountNames[j] = accountNames[j + 1];
+                            accountNumbers[j] = accountNumbers[j + 1];
+                            balances[j] = balances[j + 1];
+                        }
+                        count--; // reduce total accounts
+                        System.out.println("Account deleted!");
+                    } else {
+                        System.out.println("Account not found");
+                    }
+                    break;
+
+                default:
+                    System.out.println("Invalid choice");
+            }
+
+        } while (choice != 0);
+
+        sc.close();
+    }
+}
